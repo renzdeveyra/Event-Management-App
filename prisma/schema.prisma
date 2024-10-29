@@ -15,12 +15,12 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  image         String?
-  password      String?
-  role          Role      @default(USER)
-  events        Event[]   @relation("Organizer")
+  email         String    @unique     // Campus email
+  name          String
+  studentId     String    @unique     // Student/Staff ID
+  department    String                // Faculty/Department
+  role          Role      @default(STUDENT)
+  organizedEvents Event[]  @relation("Organizer")
   bookings      Booking[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -30,26 +30,23 @@ model Event {
   id            String    @id @default(cuid())
   title         String
   description   String
-  location      String
+  venue         String    // Campus venue (e.g., "Seminar Room", "Room 318")
+  building      String    // Building (e.g., "Casal", "Arlegui")
   startDate     DateTime
   endDate       DateTime
   capacity      Int
-  price         Decimal?
-  coverImage    String?
-  category      Category  @relation(fields: [categoryId], references: [id])
-  categoryId    String
+  eventType     EventType @default(GENERAL)
   organizer     User      @relation("Organizer", fields: [organizerId], references: [id])
   organizerId   String
+  approvedBy    String?   // Staff/Admin who approved the event
   bookings      Booking[]
-  published     Boolean   @default(false)
+  status        EventStatus @default(PENDING)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-}
 
-model Category {
-  id            String    @id @default(cuid())
-  name          String    @unique
-  events        Event[]
+  @@index([organizerId])
+  @@index([startDate])
+  @@index([status])
 }
 
 model Booking {
@@ -58,23 +55,40 @@ model Booking {
   eventId       String
   user          User      @relation(fields: [userId], references: [id])
   userId        String
-  status        BookingStatus @default(PENDING)
-  ticketCount   Int
-  totalAmount   Decimal
-  paymentId     String?
+  status        BookingStatus @default(REGISTERED)
+  attended      Boolean   @default(false)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, eventId]) // One booking per event per student
+  @@index([eventId])
 }
 
 enum Role {
-  USER
-  ORGANIZER
+  STUDENT
+  ORG_LEADER
+  STAFF
   ADMIN
 }
 
+enum EventType {
+  GENERAL
+  ACADEMIC        // Lectures, seminars
+  ORG            // Club activities
+  SPORTS          // Sports events
+  CULTURAL        // Cultural events
+  WORKSHOP        // Training/workshops
+}
+
+enum EventStatus {
+  PENDING         // Waiting for approval
+  APPROVED        // Ready to accept registrations
+  REJECTED        // Not approved
+  CANCELLED       // Cancelled after approval
+  COMPLETED       // Event has ended
+}
+
 enum BookingStatus {
-  PENDING
-  CONFIRMED
+  REGISTERED
   CANCELLED
-  COMPLETED
+  WAITLISTED      // If event is full
 }
