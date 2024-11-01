@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique     // Campus email
+  name          String
+  image         String?
+  password      String?
+  studentId     String    @unique     // Student/Staff ID
+  department    String                // Faculty/Department
+  role          Role      @default(STUDENT)
+  organizedEvents Event[]  @relation("Organizer")
+  bookings      Booking[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Event {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  venue         String    // Campus venue (e.g., "Seminar Room", "Room 318")
+  building      String    // Building (e.g., "Casal", "Arlegui")
+  startDate     DateTime
+  endDate       DateTime
+  capacity      Int
+  coverImage    String?
+  eventType     EventType @default(GENERAL)
+  organizer     User      @relation("Organizer", fields: [organizerId], references: [id])
+  organizerId   String
+  approvedBy    String?   // Staff/Admin who approved the event
+  bookings      Booking[]
+  status        EventStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([organizerId])
+  @@index([startDate])
+  @@index([status])
+}
+
+model Booking {
+  id            String    @id @default(cuid())
+  event         Event     @relation(fields: [eventId], references: [id])
+  eventId       String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  status        BookingStatus @default(REGISTERED)
+  attended      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, eventId]) // One booking per event per student
+  @@index([eventId])
+}
+
+enum Role {
+  STUDENT
+  ORG_LEADER
+  STAFF
+  ADMIN
+}
+
+enum EventType {
+  GENERAL
+  ACADEMIC        // Lectures, seminars
+  ORG            // Club activities
+  SPORTS          // Sports events
+  CULTURAL        // Cultural events
+  WORKSHOP        // Training/workshops
+}
+
+enum EventStatus {
+  PENDING         // Waiting for approval
+  APPROVED        // Ready to accept registrations
+  REJECTED        // Not approved
+  CANCELLED       // Cancelled after approval
+  COMPLETED       // Event has ended
+}
+
+enum BookingStatus {
+  REGISTERED
+  CANCELLED
+  WAITLISTED      // If event is full
+}
