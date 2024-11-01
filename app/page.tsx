@@ -7,17 +7,24 @@ export default function Home() {
     <div className="font-sans">
       <header className="bg-gradient-to-r from-[#3f51b5] to-[#673ab7] text-white py-5 px-8 flex justify-between items-center">
         <div className="flex items-center">
-          <Image src={logo} alt="Logo" className="h-10 mr-2" width={40} height={40} />
-          <h1 className="text-xl">Event planning service</h1>
+          <Image 
+            src={logo} 
+            alt="Event Planning Service Logo" 
+            className="h-10 mr-2" 
+            width={40} 
+            height={40} 
+            priority 
+          />
+          <h1 className="text-xl">Event Planning Service</h1>
         </div>
-        {/* not final nav buttons */}
+        {/* Navigation with semantic HTML */}
         <nav>
           <ul className="flex">
             <li className="mx-3"><a href="#about" className="text-white">About</a></li> 
             <li className="mx-3"><a href="#services" className="text-white">Services</a></li>
             <li className="mx-3"><a href="#contact" className="text-white">Contact</a></li>
             <li className="mx-3"><a href="#community" className="text-white">Community</a></li>
-            <li className="mx-3"><a href="#signup" className="text-white">Sign up</a></li>
+            <li className="mx-3"><a href="#signup" className="text-white">Sign Up</a></li>
           </ul>
         </nav>
       </header>
@@ -25,12 +32,21 @@ export default function Home() {
       <main>
         <section className="bg-gradient-to-r from-[#3f51b5] to-[#673ab7] text-white py-12 px-8 flex justify-between items-center">
           <div className="flex-1 mr-8">
-            <h1 className="text-3xl mb-5">Event planning service</h1>
-            <p className="text-lg mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna</p>
-            <button className="bg-white text-[#3f51b5] px-6 py-3 rounded-md hover:bg-gray-200">Get started!</button>
+            <h1 className="text-3xl mb-5">Event Planning Service</h1>
+            <p className="text-lg mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna.
+            </p>
+            <button className="bg-white text-[#3f51b5] px-6 py-3 rounded-md hover:bg-gray-200">Get Started!</button>
           </div>
           <div className="flex-1 text-right">
-            <Image src={eventManagement} alt="Event Management" className="max-w-full" width={500} height={300} />
+            <Image 
+              src={eventManagement} 
+              alt="Event Management" 
+              className="max-w-full" 
+              width={500} 
+              height={300} 
+              priority 
+            />
           </div>
         </section>
 
@@ -47,7 +63,7 @@ export default function Home() {
       </main>
 
       <footer className="bg-gradient-to-r from-[#3f51b5] to-[#673ab7] text-white py-5 px-8 text-center">
-        <p>&copy; 2023 Event planning service. All rights reserved.</p>
+        <p>&copy; 2023 Event Planning Service. All rights reserved.</p>
       </footer>
     </div>
   );
