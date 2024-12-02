@@ -17,8 +17,6 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique     // Campus email
   name          String
-  image         String?
-  password      String?
   studentId     String    @unique     // Student/Staff ID
   department    String                // Faculty/Department
   role          Role      @default(STUDENT)
@@ -37,7 +35,6 @@ model Event {
   startDate     DateTime
   endDate       DateTime
   capacity      Int
-  coverImage    String?
   eventType     EventType @default(GENERAL)
   organizer     User      @relation("Organizer", fields: [organizerId], references: [id])
   organizerId   String
